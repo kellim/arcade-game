@@ -1,8 +1,16 @@
-// Enemies our player must avoid
+var board = {
+    width: 505,
+    height: 538,
+    tileHeight: 83,
+    tileWidth: 101
+};
+// The player starts at and cannot move past yLimit
+board.yLimit = board.height - board.tileHeight - 47;
+
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.x = 0;
+    this.x = -140;
     this.y = 60;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -15,6 +23,10 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+        this.x += 50 * dt;
+        if (this.x > board.width) {
+            this.x = -150;
+        }
 };
 
 // Draw the enemy on the screen, required method for game
@@ -27,8 +39,8 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.x = 0;
-    this.y = 400;
-    this.sprite = 'images/char-princess-girl.png';
+    this.y = board.yLimit;
+    this.sprite = 'images/char-pink-girl.png';
 }
 
 Player.prototype.update = function(dt) {
@@ -37,6 +49,32 @@ Player.prototype.update = function(dt) {
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Player.prototype.handleInput = function(key) {
+    switch(key) {
+        case 'left':
+            if (this.x > 0) {
+               this.x -= board.tileWidth;
+            }
+            break;
+        case 'right':
+            if (this.x < board.width - board.tileWidth) {
+                this.x += board.tileWidth;
+                console.log(this.x)
+            }
+            break;
+        case 'up':
+            if (this.y > 0) {
+                this.y -= board.tileHeight;
+            }
+            break;
+        case 'down':
+            if (this.y < board.yLimit) {
+                this.y += board.tileHeight;
+            }
+            break;
+    }
 }
 
 // Now instantiate your objects.
