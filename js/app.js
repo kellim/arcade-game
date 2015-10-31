@@ -12,6 +12,10 @@ var Enemy = function() {
     // we've provided one for you to get started
     this.x = -140;
     this.y = 60;
+    this.width = 101;
+    this.yOffset = 78;  // whitespace on the top of enemy in the image
+    this.height = 67;   // height of the enemy within the image
+
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -24,10 +28,21 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
         this.x += 50 * dt;
+        this.checkCollision(player)
         if (this.x > board.width) {
             this.x = -150;
         }
 };
+
+Enemy.prototype.checkCollision = function(player) {
+    console.log(player.x);
+    if (this.x < player.x + player.width + player.xOffset &&
+        this.x + this.width > player.x + player.xOffset &&
+        this.y + this.yOffset < player.y + player.yOffset + player.height &&
+        this.height + this.y + this.yOffset > player.y + player.yOffset) {
+            player.reset();
+    }
+}
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -38,13 +53,19 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.x = 0;
+    this.x = board.tileWidth * 2;
     this.y = board.yLimit;
+    this.xOffset = 17;  // whitespace on each side of player in the image
+    this.width = 67;    // width of the player within the image
+    this.height = 76;   // height of the player within the image
+    this.yOffset = 64;  // whitespace on the top of player in the image
     this.sprite = 'images/char-pink-girl.png';
 }
 
-Player.prototype.update = function(dt) {
-
+Player.prototype.reset = function() {
+    // Put player back at the starting position
+    this.x = board.tileWidth * 2;
+    this.y = board.yLimit;
 };
 
 Player.prototype.render = function() {
@@ -61,7 +82,6 @@ Player.prototype.handleInput = function(key) {
         case 'right':
             if (this.x < board.width - board.tileWidth) {
                 this.x += board.tileWidth;
-                console.log(this.x)
             }
             break;
         case 'up':
