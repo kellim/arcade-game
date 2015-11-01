@@ -7,11 +7,18 @@ var board = {
 // The player starts at and cannot move past yLimit
 board.yLimit = board.height - board.tileHeight - 47;
 
-var Enemy = function() {
+// Function code from Mozilla Developer Network
+// Returns a random number between min (inclusive) and max (exclusive)
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+var Enemy = function(startX, startY) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.x = -140;
-    this.y = 60;
+    this.x = startX;
+    this.y = startY;
+    this.speed = getRandomArbitrary(50, 300);
     this.width = 101;
     this.yOffset = 78;  // whitespace on the top of enemy in the image
     this.height = 67;   // height of the enemy within the image
@@ -27,7 +34,7 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-        this.x += 50 * dt;
+        this.x += this.speed * dt;
         this.checkCollision(player)
         if (this.x > board.width) {
             this.x = -150;
@@ -43,6 +50,8 @@ Enemy.prototype.checkCollision = function(player) {
             player.reset();
     }
 }
+
+
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -100,8 +109,11 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var enemy1 = new Enemy();
-var allEnemies = [enemy1];
+var enemy1 = new Enemy(-150, 60);
+var enemy2 = new Enemy(-250, 60);
+var enemy3 = new Enemy(-100, 60 + board.tileHeight);
+var enemy4 = new Enemy(-50, 60 + board.tileHeight * 2);
+var allEnemies = [enemy1, enemy2, enemy3, enemy4];
 var player = new Player();
 
 
@@ -116,4 +128,5 @@ document.addEventListener('keyup', function(e) {
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
+
 });
