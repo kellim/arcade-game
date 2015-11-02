@@ -41,6 +41,8 @@ Enemy.prototype.update = function(dt) {
         }
 };
 
+// Collision uses axis-aligned bounding box code adapted from MDN
+// https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
 Enemy.prototype.checkCollision = function(player) {
     console.log(player.x);
     if (this.x < player.x + player.width + player.xOffset &&
@@ -77,6 +79,14 @@ Player.prototype.reset = function() {
     this.y = board.yLimit;
 };
 
+Player.prototype.update = function() {
+    console.log(this.x + ', ' + this.y);
+    if (this.y <= 0) {
+        player.reset();
+    }
+};
+
+
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
@@ -109,10 +119,10 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var enemy1 = new Enemy(-150, 60);
-var enemy2 = new Enemy(-250, 60);
-var enemy3 = new Enemy(-100, 60 + board.tileHeight);
-var enemy4 = new Enemy(-50, 60 + board.tileHeight * 2);
+var enemy1 = new Enemy(getRandomArbitrary(-300, -400), 60);
+var enemy2 = new Enemy(getRandomArbitrary(-200, -300), 60);
+var enemy3 = new Enemy(getRandomArbitrary(-350, -500), 60 + board.tileHeight);
+var enemy4 = new Enemy(getRandomArbitrary(-50, -150), 60 + board.tileHeight * 2);
 var allEnemies = [enemy1, enemy2, enemy3, enemy4];
 var player = new Player();
 
