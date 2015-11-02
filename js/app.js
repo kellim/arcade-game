@@ -44,11 +44,11 @@ Enemy.prototype.update = function(dt) {
 // Collision uses axis-aligned bounding box code adapted from MDN
 // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
 Enemy.prototype.checkCollision = function(player) {
-    console.log(player.x);
     if (this.x < player.x + player.width + player.xOffset &&
         this.x + this.width > player.x + player.xOffset &&
         this.y + this.yOffset < player.y + player.yOffset + player.height &&
         this.height + this.y + this.yOffset > player.y + player.yOffset) {
+            player.score -= 50;
             player.reset();
     }
 }
@@ -70,6 +70,7 @@ var Player = function() {
     this.width = 67;    // width of the player within the image
     this.height = 76;   // height of the player within the image
     this.yOffset = 64;  // whitespace on the top of player in the image
+    this.score = 0;
     this.sprite = 'images/char-pink-girl.png';
 }
 
@@ -77,11 +78,13 @@ Player.prototype.reset = function() {
     // Put player back at the starting position
     this.x = board.tileWidth * 2;
     this.y = board.yLimit;
+    // Update the score
+    document.getElementById('score').innerHTML = this.score;
 };
 
 Player.prototype.update = function() {
-    console.log(this.x + ', ' + this.y);
     if (this.y <= 0) {
+        this.score += 100;
         player.reset();
     }
 };
@@ -91,6 +94,9 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// Move the player left, right, up, or down based on
+// the arrow key the user presses. It also prevents
+// the player from moving off the board.
 Player.prototype.handleInput = function(key) {
     switch(key) {
         case 'left':
