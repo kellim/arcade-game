@@ -2,6 +2,24 @@ body {
     text-align: center;
 }
 
+h1, h2 {
+  font-family: 'Luckiest Guy', cursive;
+  color: #a9054a;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+h2 {
+  font-size: 2.25em;
+}
+
+h1, h2, div {
+  padding: 0px;
+  margin: 0px;
+}
+
 .info {
   font-weight: bold;
 }
