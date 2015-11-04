@@ -79,7 +79,7 @@ Player.prototype.reset = function() {
     this.x = board.tileWidth * 2;
     this.y = board.yLimit;
     // Update the score
-    document.getElementById('score').innerHTML = this.score;
+    document.getElementById('score-value').innerHTML = this.score;
 };
 
 Player.prototype.update = function() {

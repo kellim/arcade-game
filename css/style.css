@@ -1,18 +1,21 @@
-body {
-    text-align: center;
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    width: 505px;
 }
 
 h1, h2 {
-  font-family: 'Luckiest Guy', cursive;
   color: #a9054a;
+  text-align: center;
 }
 
 h1 {
-  font-size: 3em;
+  font: 3em 'Luckiest Guy', sans-serif;
 }
 
 h2 {
-  font-size: 2.25em;
+  font: 2.25em 'Luckiest Guy', sans-serif;
 }
 
 h1, h2, div {
@@ -20,6 +23,19 @@ h1, h2, div {
   margin: 0px;
 }
 
-.info {
-  font-weight: bold;
+li {
+    list-style: none;
+}
+
+.info, .score {
+  padding: 0;
+  margin: auto;
+  width: 505px;
+}
+
+.score {
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    font-size: 2em;
+    text-align: left;
 }
