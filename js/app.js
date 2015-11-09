@@ -8,24 +8,25 @@ var board = {
 board.yLimit = board.height - board.tileHeight - 47;
 
 // Function code from Mozilla Developer Network
-// Returns a random number between min (inclusive) and max (exclusive)
-function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
+// Returns a random integer between min (inclusive) and max (exclusive)
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
-var Enemy = function(startX, startY) {
+var Enemy = function(startX, startY, type) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     this.x = startX;
     this.y = startY;
-    this.speed = getRandomArbitrary(50, 300);
+    this.speed = getRandomInt(50, 300);
     this.width = 101;
     this.yOffset = 78;  // whitespace on the top of enemy in the image
     this.height = 67;   // height of the enemy within the image
+    this.type = type;
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
+    this.sprite = ['images/enemy-bug.png', 'images/enemy-bug-beak-green.png', 'images/enemy-bug-long-blue.png', 'images/enemy-bug-round-yellow.png']
 };
 
 // Update the enemy's position, required method for game
@@ -57,7 +58,9 @@ Enemy.prototype.checkCollision = function(player) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    console.log(this.type);
+    ctx.drawImage(Resources.get(this.sprite[this.type]), this.x, this.y);
+
 };
 
 // Now write your own player class
@@ -125,10 +128,10 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var enemy1 = new Enemy(getRandomArbitrary(-300, -400), 60);
-var enemy2 = new Enemy(getRandomArbitrary(-200, -300), 60);
-var enemy3 = new Enemy(getRandomArbitrary(-350, -500), 60 + board.tileHeight);
-var enemy4 = new Enemy(getRandomArbitrary(-50, -150), 60 + board.tileHeight * 2);
+var enemy1 = new Enemy(getRandomInt(-300, -400), 60, 0);
+var enemy2 = new Enemy(getRandomInt(-200, -300), 60, 1);
+var enemy3 = new Enemy(getRandomInt(-350, -500), 60 + board.tileHeight, 2);
+var enemy4 = new Enemy(getRandomInt(-50, -150), 60 + board.tileHeight * 2, 3);
 var allEnemies = [enemy1, enemy2, enemy3, enemy4];
 var player = new Player();
 
