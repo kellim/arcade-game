@@ -1,6 +1,6 @@
 var board = {
-    width: 505,
-    height: 538,
+    width: 707,
+    height: 704,
     tileHeight: 83,
     tileWidth: 101
 };
@@ -26,7 +26,8 @@ var Enemy = function(startX, startY, type) {
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.sprite = ['images/enemy-bug.png', 'images/enemy-bug-beak-green.png', 'images/enemy-bug-long-blue.png', 'images/enemy-bug-round-yellow.png']
+    this.sprite = ['images/enemy-bug.png', 'images/enemy-bug-beak-green.png', 'images/enemy-bug-long-blue.png', 'images/enemy-bug-round-yellow.png',
+                   'images/enemy-bug-purple.png']
 };
 
 // Update the enemy's position, required method for game
@@ -55,7 +56,6 @@ Enemy.prototype.checkCollision = function(player) {
 }
 
 
-
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     console.log(this.type);
@@ -67,7 +67,7 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.x = board.tileWidth * 2;
+    this.x = board.tileWidth * 3;
     this.y = board.yLimit;
     this.xOffset = 17;  // whitespace on each side of player in the image
     this.width = 67;    // width of the player within the image
@@ -79,7 +79,7 @@ var Player = function() {
 
 Player.prototype.reset = function() {
     // Put player back at the starting position
-    this.x = board.tileWidth * 2;
+    this.x = board.tileWidth * 3;
     this.y = board.yLimit;
     // Update the score
     document.getElementById('score-value').innerHTML = this.score;
@@ -128,11 +128,12 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var enemy1 = new Enemy(getRandomInt(-300, -400), 60, 0);
-var enemy2 = new Enemy(getRandomInt(-200, -300), 60, 1);
-var enemy3 = new Enemy(getRandomInt(-350, -500), 60 + board.tileHeight, 2);
-var enemy4 = new Enemy(getRandomInt(-50, -150), 60 + board.tileHeight * 2, 3);
-var allEnemies = [enemy1, enemy2, enemy3, enemy4];
+var enemy1 = new Enemy(getRandomInt(-300, -400), 60 + board.tileHeight, 0);
+var enemy2 = new Enemy(getRandomInt(-200, -300), 60 + board.tileHeight * 2, 1);
+var enemy3 = new Enemy(getRandomInt(-350, -500), 60 + board.tileHeight *3, 2);
+var enemy4 = new Enemy(getRandomInt(-50, -150), 60 + board.tileHeight * 4, 3);
+var enemy5 = new Enemy(getRandomInt(-550, -150), 60 + board.tileHeight * 4, 4);
+var allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5];
 var player = new Player();
 
 

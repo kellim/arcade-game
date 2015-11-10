@@ -25,8 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
-    canvas.height = 606;
+    canvas.width = 707;
+    canvas.height = 808;
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -79,6 +79,7 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         updateEntities(dt);
         // checkCollisions();
     }
@@ -108,15 +109,17 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/grass-block.png',    //Top row is grass
+                'images/stone-block.png',    // Second row is stone
+                'images/street-block.png',    // Row 1 of 4 of street
+                'images/street-block.png',    // Row 2 of 4 of street
+                'images/street-block.png',    // Row 3 of 4 of street
+                'images/street-block.png',    // Row 4 of 4 of street
+                'images/stone-block.png',    // second to last row is stone
+                'images/grass-block.png'    // las row is grass
             ],
-            numRows = 6,
-            numCols = 5,
+            numRows = 8,
+            numCols = 7,
             row, col;
 
         /* Loop through the number of rows and columns we've defined above
@@ -169,12 +172,13 @@ var Engine = (function(global) {
      */
     Resources.load([
         'images/stone-block.png',
-        'images/water-block.png',
         'images/grass-block.png',
+        'images/street-block.png',
         'images/enemy-bug.png',
         'images/enemy-bug-beak-green.png',
         'images/enemy-bug-long-blue.png',
         'images/enemy-bug-round-yellow.png',
+        'images/enemy-bug-purple.png',
         'images/char-boy.png',
         'images/char-pink-girl.png'
     ]);
