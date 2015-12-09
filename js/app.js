@@ -46,7 +46,9 @@ Enemy.prototype.checkCollision = function(player) {
         this.x + this.xOffset + this.width > player.x + player.xOffset &&
         this.y + this.yOffset < player.y + player.yOffset + player.height &&
         this.height + this.y + this.yOffset > player.y + player.yOffset) {
-            player.score -= 50;
+            if (player.score > 0) {
+                player.score -= 50;
+            }
             player.reset();
     }
 }
