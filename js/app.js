@@ -13,21 +13,17 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-var Enemy = function(startX, startY, type) {
+var Enemy = function(x, y, speed, yOffset, height, sprite) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.x = startX;
-    this.y = startY;
-    this.speed = getRandomInt(50, 300);
-    this.width = 101;
-    this.yOffset = 78;  // whitespace on the top of enemy in the image
-    this.height = 67;   // height of the enemy within the image
-    this.type = type;
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = ['images/enemy-bug.png', 'images/enemy-bug-beak-green.png', 'images/enemy-bug-long-blue.png', 'images/enemy-bug-round-yellow.png',
-                   'images/enemy-bug-purple.png']
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
+    this.width = 98;         // width of enemy in the image
+    this.xOffset = 1;        // whitespace on the sides of the enemy in the image
+    this.yOffset = yOffset;  // whitespace on the top of enemy in the image
+    this.height = height;    // height of the enemy within the image
+    this.sprite = sprite;    // uses provided helper to easily load images
 };
 
 // Update the enemy's position, required method for game
@@ -46,8 +42,8 @@ Enemy.prototype.update = function(dt) {
 // Collision uses axis-aligned bounding box code adapted from MDN
 // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
 Enemy.prototype.checkCollision = function(player) {
-    if (this.x < player.x + player.width + player.xOffset &&
-        this.x + this.width > player.x + player.xOffset &&
+    if (this.x + this.xOffset < player.x + player.width + player.xOffset &&
+        this.x + this.xOffset + this.width > player.x + player.xOffset &&
         this.y + this.yOffset < player.y + player.yOffset + player.height &&
         this.height + this.y + this.yOffset > player.y + player.yOffset) {
             player.score -= 50;
@@ -55,12 +51,10 @@ Enemy.prototype.checkCollision = function(player) {
     }
 }
 
-
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     console.log(this.type);
-    ctx.drawImage(Resources.get(this.sprite[this.type]), this.x, this.y);
-
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 // Now write your own player class
@@ -91,7 +85,6 @@ Player.prototype.update = function() {
         player.reset();
     }
 };
-
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -128,14 +121,19 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var enemy1 = new Enemy(getRandomInt(-300, -400), 60 + board.tileHeight, 0);
-var enemy2 = new Enemy(getRandomInt(-200, -300), 60 + board.tileHeight * 2, 1);
-var enemy3 = new Enemy(getRandomInt(-350, -500), 60 + board.tileHeight *3, 2);
-var enemy4 = new Enemy(getRandomInt(-50, -150), 60 + board.tileHeight * 4, 3);
-var enemy5 = new Enemy(getRandomInt(-550, -150), 60 + board.tileHeight * 4, 4);
-var allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5];
+var ladyBug1 = new Enemy(getRandomInt(-300, -400), 60 + board.tileHeight,
+                400, 77, 67, 'images/enemy-bug.png');
+var greenBug1 = new Enemy(getRandomInt(-200, -300), 60 + board.tileHeight * 2,
+                getRandomInt(250, 350), 79, 53, 'images/enemy-bug-green.png');
+var blueBug1 = new Enemy(getRandomInt(-500, -600),60 + board.tileHeight * 3,
+                getRandomInt(50, 75), 79, 52, 'images/enemy-bug-blue.png');
+var yellowBug1 = new Enemy(getRandomInt(-50, -100), 60 + board.tileHeight * 4,
+                getRandomInt(100, 200), 73, 76, 'images/enemy-bug-yellow.png');
+var purpleBug1 = new Enemy(getRandomInt(-500, -600), 60 + board.tileHeight * 4,
+                getRandomInt(400, 500), 77, 67, 'images/enemy-bug-purple.png');
+var allEnemies = [ladyBug1, greenBug1, blueBug1, yellowBug1, purpleBug1];
 var player = new Player();
-
+console.log(ladyBug1.x, ladyBug1.y, ladyBug1.speed, ladyBug1.yOffset, ladyBug1.height, ladyBug1.sprite);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
