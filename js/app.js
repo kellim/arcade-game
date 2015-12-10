@@ -70,6 +70,7 @@ var Player = function() {
     this.height = 76;   // height of the player within the image
     this.yOffset = 64;  // whitespace on the top of player in the image
     this.score = 0;
+    this.level = 1;
     this.sprite = 'images/char-pink-girl.png';
 }
 
@@ -79,11 +80,14 @@ Player.prototype.reset = function() {
     this.y = board.yLimit;
     // Update the score
     document.getElementById('score-value').innerHTML = this.score;
+    // Update the Level
+    document.getElementById('level-value').innerHTML = this.level;
 };
 
 Player.prototype.update = function() {
     if (this.y <= 0) {
         this.score += 100;
+        this.level += 1;
         player.reset();
     }
 };

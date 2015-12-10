@@ -11,11 +11,11 @@ h1, h2 {
 }
 
 h1 {
-  font: 3em 'Luckiest Guy', sans-serif;
+  font: 2em 'Luckiest Guy', sans-serif;
 }
 
 h2 {
-  font: 2.25em 'Luckiest Guy', sans-serif;
+  font: 2em 'Luckiest Guy', sans-serif;
 }
 
 h1, h2, div {
@@ -27,15 +27,15 @@ li {
     list-style: none;
 }
 
-.info, .score {
+.info, .score, .level {
   padding: 0;
   margin: auto;
   width: 505px;
 }
 
-.score {
+.score, .level {
     font-weight: bold;
     font-family: 'Courier New', monospace;
-    font-size: 2em;
+    font-size: 1.25em;
     text-align: left;
 }
