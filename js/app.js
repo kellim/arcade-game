@@ -7,11 +7,23 @@ var board = {
 // The player starts at and cannot move past yLimit
 board.yLimit = board.height - board.tileHeight - 47;
 
+var game = {
+    level: 1,
+    score: 0,
+    increaseScore: function(points) { this.score += points;},
+    decreaseScore: function(points) { this.score -= points;},
+    levelUp: function() {
+        this.level += 1;
+        game.increaseScore(100);
+    }
+};
+
 // Function code from Mozilla Developer Network
 // Returns a random integer between min (inclusive) and max (exclusive)
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
 
 var Enemy = function(x, y, speed, yOffset, height, sprite) {
     // Variables applied to each of our instances go here,
@@ -37,17 +49,18 @@ Enemy.prototype.update = function(dt) {
         if (this.x > board.width) {
             this.x = -150;
         }
+
 };
 
 // Collision uses axis-aligned bounding box code adapted from MDN
 // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-Enemy.prototype.checkCollision = function(player) {
+Enemy.prototype.checkCollision = function() {
     if (this.x + this.xOffset < player.x + player.width + player.xOffset &&
         this.x + this.xOffset + this.width > player.x + player.xOffset &&
         this.y + this.yOffset < player.y + player.yOffset + player.height &&
         this.height + this.y + this.yOffset > player.y + player.yOffset) {
-            if (player.score > 0) {
-                player.score -= 50;
+            if (game.score > 0) {
+                game.decreaseScore(50);
             }
             player.reset();
     }
@@ -55,9 +68,10 @@ Enemy.prototype.checkCollision = function(player) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    console.log(this.type);
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
+
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -69,8 +83,6 @@ var Player = function() {
     this.width = 67;    // width of the player within the image
     this.height = 76;   // height of the player within the image
     this.yOffset = 64;  // whitespace on the top of player in the image
-    this.score = 0;
-    this.level = 1;
     this.sprite = 'images/char-pink-girl.png';
 }
 
@@ -79,15 +91,14 @@ Player.prototype.reset = function() {
     this.x = board.tileWidth * 3;
     this.y = board.yLimit;
     // Update the score
-    document.getElementById('score-value').innerHTML = this.score;
+    document.getElementById('score-value').innerHTML = game.score;
     // Update the Level
-    document.getElementById('level-value').innerHTML = this.level;
+    document.getElementById('level-value').innerHTML = game.level;
 };
 
 Player.prototype.update = function() {
     if (this.y <= 0) {
-        this.score += 100;
-        this.level += 1;
+        game.levelUp();
         player.reset();
     }
 };
@@ -139,7 +150,6 @@ var purpleBug1 = new Enemy(getRandomInt(-500, -600), 60 + board.tileHeight * 4,
                 getRandomInt(400, 500), 77, 67, 'images/enemy-bug-purple.png');
 var allEnemies = [ladyBug1, greenBug1, blueBug1, yellowBug1, purpleBug1];
 var player = new Player();
-console.log(ladyBug1.x, ladyBug1.y, ladyBug1.speed, ladyBug1.yOffset, ladyBug1.height, ladyBug1.sprite);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
