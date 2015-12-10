@@ -15,6 +15,10 @@ var game = {
     levelUp: function() {
         this.level += 1;
         game.increaseScore(100);
+        // increase enemy speed
+        allEnemies.forEach(function(enemy) {
+            enemy.increaseSpeed(20);
+        });
     }
 };
 
@@ -71,6 +75,9 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.increaseSpeed = function(amount) {
+    this.speed += amount;
+};
 
 
 // Now write your own player class
@@ -138,17 +145,17 @@ Player.prototype.handleInput = function(key) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var ladyBug1 = new Enemy(getRandomInt(-300, -400), 60 + board.tileHeight,
-                400, 77, 67, 'images/enemy-bug.png');
-var greenBug1 = new Enemy(getRandomInt(-200, -300), 60 + board.tileHeight * 2,
-                getRandomInt(250, 350), 79, 53, 'images/enemy-bug-green.png');
-var blueBug1 = new Enemy(getRandomInt(-500, -600),60 + board.tileHeight * 3,
-                getRandomInt(50, 75), 79, 52, 'images/enemy-bug-blue.png');
-var yellowBug1 = new Enemy(getRandomInt(-50, -100), 60 + board.tileHeight * 4,
-                getRandomInt(100, 200), 73, 76, 'images/enemy-bug-yellow.png');
-var purpleBug1 = new Enemy(getRandomInt(-500, -600), 60 + board.tileHeight * 4,
-                getRandomInt(400, 500), 77, 67, 'images/enemy-bug-purple.png');
-var allEnemies = [ladyBug1, greenBug1, blueBug1, yellowBug1, purpleBug1];
+var ladyBug = new Enemy(getRandomInt(-300, -400), 60 + board.tileHeight,
+                getRandomInt(100, 200), 77, 67, 'images/enemy-bug.png');
+var greenBug = new Enemy(getRandomInt(-200, -300), 60 + board.tileHeight * 2,
+                getRandomInt(150, 225), 79, 53, 'images/enemy-bug-green.png');
+var blueBug = new Enemy(getRandomInt(-500, -600),60 + board.tileHeight * 3,
+                getRandomInt(50, 150), 79, 52, 'images/enemy-bug-blue.png');
+var yellowBug = new Enemy(getRandomInt(-50, -100), 60 + board.tileHeight * 4,
+                getRandomInt(100, 250), 73, 76, 'images/enemy-bug-yellow.png');
+var purpleBug = new Enemy(getRandomInt(-500, -600), 60 + board.tileHeight * 4,
+                getRandomInt(100, 200), 77, 67, 'images/enemy-bug-purple.png');
+var allEnemies = [ladyBug, greenBug, blueBug, yellowBug, purpleBug];
 var player = new Player();
 
 // This listens for key presses and sends the keys to your
