@@ -126,21 +126,29 @@ var Engine = (function(global) {
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
-        for (row = 0; row < numRows; row++) {
-            for (col = 0; col < numCols; col++) {
-                /* The drawImage function of the canvas' context element
-                 * requires 3 parameters: the image to draw, the x coordinate
-                 * to start drawing and the y coordinate to start drawing.
-                 * We're using our Resources helpers to refer to our images
-                 * so that we get the benefits of caching these images, since
-                 * we're using them over and over.
-                 */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+        if (game.playing) {
+            for (row = 0; row < numRows; row++) {
+                    for (col = 0; col < numCols; col++) {
+                        /* The drawImage function of the canvas' context element
+                         * requires 3 parameters: the image to draw, the x coordinate
+                         * to start drawing and the y coordinate to start drawing.
+                         * We're using our Resources helpers to refer to our images
+                         * so that we get the benefits of caching these images, since
+                         * we're using them over and over.
+                         */
+                        ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                    }
             }
+            renderEntities();
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle='green';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = "5em Arial";
+            ctx.fillText("GAME OVER", 335.5, 404);
+            ctx.fillText("YOU WON!", 335.5, 505);
         }
-
-
-        renderEntities();
     }
 
     /* This function is called by the render function and is called on each game

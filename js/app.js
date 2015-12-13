@@ -12,8 +12,14 @@ var game = {
     score: 0,
     increaseScore: function(points) { this.score += points;},
     decreaseScore: function(points) { this.score -= points;},
+    startPlaying: function() {this.playing = false;},
+    stopPlaying: function() {this.playing = true;},
+    playing: true,
     levelUp: function() {
         this.level += 1;
+        if (this.level > 20) {
+            this.playing = false;
+        }
         game.increaseScore(100);
         // increase enemy speed as level increases
         allEnemies.forEach(function(enemy) {
@@ -84,14 +90,16 @@ function getRandomInt(min, max) {
 var Enemy = function(x, y, speed, yOffset, height, sprite) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    this.x = x;
-    this.y = y;
-    this.speed = speed;
-    this.width = 98;         // width of enemy in the image
-    this.xOffset = 1;        // whitespace on the sides of the enemy in the image
-    this.yOffset = yOffset;  // whitespace on the top of enemy in the image
-    this.height = height;    // height of the enemy within the image
-    this.sprite = sprite;    // uses provided helper to easily load images
+    if (game.playing) {
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.width = 98;         // width of enemy in the image
+        this.xOffset = 1;        // whitespace on the sides of the enemy in the image
+        this.yOffset = yOffset;  // whitespace on the top of enemy in the image
+        this.height = height;    // height of the enemy within the image
+        this.sprite = sprite;    // uses provided helper to easily load images
+    }
 };
 
 // Update the enemy's position, required method for game
@@ -100,31 +108,37 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-        this.x += this.speed * dt;
-        this.checkCollision(player)
-        if (this.x > board.width) {
-            this.x = -150;
-        }
+        if (game.playing) {
+            this.x += this.speed * dt;
+            this.checkCollision(player)
+            if (this.x > board.width) {
+                this.x = -150;
+            }
+    }
 
 };
 
 // Collision uses axis-aligned bounding box code adapted from MDN
 // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
 Enemy.prototype.checkCollision = function() {
-    if (this.x + this.xOffset < player.x + player.width + player.xOffset &&
-        this.x + this.xOffset + this.width > player.x + player.xOffset &&
-        this.y + this.yOffset < player.y + player.yOffset + player.height &&
-        this.height + this.y + this.yOffset > player.y + player.yOffset) {
-            if (game.score > 0) {
-                game.decreaseScore(50);
-            }
-            player.reset();
+    if (game.playing) {
+        if (this.x + this.xOffset < player.x + player.width + player.xOffset &&
+            this.x + this.xOffset + this.width > player.x + player.xOffset &&
+            this.y + this.yOffset < player.y + player.yOffset + player.height &&
+            this.height + this.y + this.yOffset > player.y + player.yOffset) {
+                if (game.score > 0) {
+                    game.decreaseScore(50);
+                }
+                player.reset();
+        }
     }
 }
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    if (game.playing) {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
 };
 
 Enemy.prototype.increaseSpeed = function(amount) {
@@ -136,61 +150,71 @@ Enemy.prototype.increaseSpeed = function(amount) {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.x = board.tileWidth * 3;
-    this.y = board.yLimit;
-    this.xOffset = 17;  // whitespace on each side of player in the image
-    this.width = 67;    // width of the player within the image
-    this.height = 76;   // height of the player within the image
-    this.yOffset = 64;  // whitespace on the top of player in the image
-    this.sprite = 'images/char-pink-girl.png';
+    if (game.playing) {
+        this.x = board.tileWidth * 3;
+        this.y = board.yLimit;
+        this.xOffset = 17;  // whitespace on each side of player in the image
+        this.width = 67;    // width of the player within the image
+        this.height = 76;   // height of the player within the image
+        this.yOffset = 64;  // whitespace on the top of player in the image
+        this.sprite = 'images/char-pink-girl.png';
+    }
 }
 
 Player.prototype.reset = function() {
-    // Put player back at the starting position
-    this.x = board.tileWidth * 3;
-    this.y = board.yLimit;
-    // Update the score
-    document.getElementById('score-value').innerHTML = game.score;
-    // Update the Level
-    document.getElementById('level-value').innerHTML = game.level;
+    if (game.playing) {
+        // Put player back at the starting position
+        this.x = board.tileWidth * 3;
+        this.y = board.yLimit;
+        // Update the score
+        document.getElementById('score-value').innerHTML = game.score;
+        // Update the Level
+        document.getElementById('level-value').innerHTML = game.level;
+    }
 };
 
 Player.prototype.update = function() {
-    if (this.y <= 0) {
-        game.levelUp();
-        player.reset();
+    if (game.playing) {
+        if (this.y <= 0) {
+            game.levelUp();
+            player.reset();
+        }
     }
 };
 
 Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    if (game.playing) {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
 }
 
 // Move the player left, right, up, or down based on
 // the arrow key the user presses. It also prevents
 // the player from moving off the board.
 Player.prototype.handleInput = function(key) {
-    switch(key) {
-        case 'left':
-            if (this.x > 0) {
-               this.x -= board.tileWidth;
-            }
-            break;
-        case 'right':
-            if (this.x < board.width - board.tileWidth) {
-                this.x += board.tileWidth;
-            }
-            break;
-        case 'up':
-            if (this.y > 0) {
-                this.y -= board.tileHeight;
-            }
-            break;
-        case 'down':
-            if (this.y < board.yLimit) {
-                this.y += board.tileHeight;
-            }
-            break;
+    if (game.playing) {
+        switch(key) {
+            case 'left':
+                if (this.x > 0) {
+                   this.x -= board.tileWidth;
+                }
+                break;
+            case 'right':
+                if (this.x < board.width - board.tileWidth) {
+                    this.x += board.tileWidth;
+                }
+                break;
+            case 'up':
+                if (this.y > 0) {
+                    this.y -= board.tileHeight;
+                }
+                break;
+            case 'down':
+                if (this.y < board.yLimit) {
+                    this.y += board.tileHeight;
+                }
+                break;
+        }
     }
 }
 
