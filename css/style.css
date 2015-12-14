@@ -27,13 +27,13 @@ li {
     list-style: none;
 }
 
-.info, .score, .level {
+.info, .score, .level, .lives {
   padding: 0;
   margin: auto;
   width: 505px;
 }
 
-.score, .level {
+.score, .level, .lives {
     font-weight: bold;
     font-family: 'Courier New', monospace;
     font-size: 1.25em;

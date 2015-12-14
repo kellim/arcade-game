@@ -10,6 +10,7 @@ board.yLimit = board.height - board.tileHeight - 47;
 var game = {
     level: 1,
     score: 0,
+    lives: 3,
     increaseScore: function(points) { this.score += points;},
     decreaseScore: function(points) { this.score -= points;},
     startPlaying: function() {this.playing = false;},
@@ -128,7 +129,13 @@ Enemy.prototype.checkCollision = function() {
                 if (game.score > 0) {
                     game.decreaseScore(50);
                 }
-                player.reset();
+                game.lives--;
+                document.getElementById('lives-value').innerHTML = game.lives;
+                if (game.lives > 0) {
+                    player.reset();
+                } else {
+                    game.playing = false;
+                }
         }
     }
 }

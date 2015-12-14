@@ -147,7 +147,12 @@ var Engine = (function(global) {
             ctx.textBaseline = 'middle';
             ctx.font = "5em Arial";
             ctx.fillText("GAME OVER", 335.5, 404);
-            ctx.fillText("YOU WON!", 335.5, 505);
+            if (game.lives > 0) {
+                ctx.fillText("YOU WON!", 335.5, 505);
+            } else {
+                ctx.fillText("YOU LOST!", 335.5, 505);
+            }
+
         }
     }
 
