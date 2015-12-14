@@ -86,21 +86,25 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+var Entity = function(x, y, width, height, xOffset, yOffset, sprite) {
+    this.x = x;
+    this.y = y;
+    this.width = width;     // width of entity in the image
+    this.height = height;   // height of the entity within the image
+    this.xOffset = xOffset; // whitespace on the sides of the entity in the image
+    this.yOffset = yOffset; // whitespace on the top of entity in the image
+    this.sprite = sprite;   // uses provided helper to easily load images
+}
 
 var Enemy = function(x, y, speed, yOffset, height, sprite) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-    if (game.playing) {
-        this.x = x;
-        this.y = y;
+        Entity.call(this, x, y, 98, height, 1, yOffset, sprite);
         this.speed = speed;
-        this.width = 98;         // width of enemy in the image
-        this.xOffset = 1;        // whitespace on the sides of the enemy in the image
-        this.yOffset = yOffset;  // whitespace on the top of enemy in the image
-        this.height = height;    // height of the enemy within the image
-        this.sprite = sprite;    // uses provided helper to easily load images
-    }
 };
+
+Enemy.prototype = Object.create(Entity.prototype);
+Enemy.prototype.constructor = Entity;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -150,16 +154,12 @@ Enemy.prototype.increaseSpeed = function(amount) {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    if (game.playing) {
-        this.x = board.tileWidth * 3;
-        this.y = board.yLimit;
-        this.xOffset = 17;  // whitespace on each side of player in the image
-        this.width = 67;    // width of the player within the image
-        this.height = 76;   // height of the player within the image
-        this.yOffset = 64;  // whitespace on the top of player in the image
-        this.sprite = 'images/char-pink-girl.png';
-    }
+        Entity.call(this, board.tileWidth * 3, board.yLimit, 67, 76, 17, 64,
+                    'images/char-pink-girl.png');
 }
+
+Player.prototype = Object.create(Entity.prototype);
+Player.prototype.constructor = Entity;
 
 Player.prototype.reset = function() {
     if (game.playing) {
@@ -231,7 +231,7 @@ var blueBug = new Enemy(getRandomInt(-50, -100), 60 + board.tileHeight * 4,
                 getRandomInt(100, 250), 79, 52, 'images/enemy-bug-blue.png');
 var allEnemies = [ladyBug, greenBug, yellowBug, blueBug];
 var player = new Player();
-
+console.log(ladyBug);
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
