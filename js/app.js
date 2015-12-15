@@ -4,6 +4,7 @@ var board = {
     tileHeight: 83,
     tileWidth: 101
 };
+
 // The player starts at and cannot move past yLimit
 board.yLimit = board.height - board.tileHeight - 47;
 
@@ -83,6 +84,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+// Entity object constructor
 var Entity = function(x, y, width, height, xOffset, yOffset, sprite) {
     this.x = x;
     this.y = y;
@@ -92,6 +94,22 @@ var Entity = function(x, y, width, height, xOffset, yOffset, sprite) {
     this.yOffset = yOffset; // whitespace on the top of entity in the image
     this.sprite = sprite;   // uses provided helper to easily load images
 }
+
+// Collision detection uses axis-aligned bounding box code adapted from MDN
+// https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+Entity.prototype.checkCollision = function(otherEntity) {
+    if (game.playing) {
+        if (this.x + this.xOffset < otherEntity.x + otherEntity.width + otherEntity.xOffset &&
+            this.x + this.xOffset + this.width > otherEntity.x + otherEntity.xOffset &&
+            this.y + this.yOffset < otherEntity.y + otherEntity.yOffset + otherEntity.height &&
+            this.height + this.y + this.yOffset > otherEntity.y + otherEntity.yOffset) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
 
 var Enemy = function(x, y, speed, yOffset, height, sprite) {
     // Variables applied to each of our instances go here,
@@ -109,37 +127,26 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-        if (game.playing) {
-            this.x += this.speed * dt;
-            this.checkCollision(player)
-            if (this.x > board.width) {
-                this.x = -150;
-            }
-    }
-
-};
-
-// Collision uses axis-aligned bounding box code adapted from MDN
-// https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-Enemy.prototype.checkCollision = function() {
     if (game.playing) {
-        if (this.x + this.xOffset < player.x + player.width + player.xOffset &&
-            this.x + this.xOffset + this.width > player.x + player.xOffset &&
-            this.y + this.yOffset < player.y + player.yOffset + player.height &&
-            this.height + this.y + this.yOffset > player.y + player.yOffset) {
-                if (game.score > 0) {
-                    game.decreaseScore(50);
-                }
-                game.lives--;
-                document.getElementById('lives-value').innerHTML = game.lives;
-                if (game.lives > 0) {
-                    player.reset();
-                } else {
-                    game.playing = false;
-                }
+        this.x += this.speed * dt;
+        if (this.checkCollision(player)) {
+            if (game.score > 0) {
+                game.decreaseScore(50);
+            }
+            game.lives--;
+            document.getElementById('lives-value').innerHTML = game.lives;
+            if (game.lives > 0) {
+                player.reset();
+            } else {
+                game.playing = false;
+            }
+        }
+        if (this.x > board.width) {
+            this.x = -150;
         }
     }
-}
+};
+
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -272,24 +279,12 @@ Heart.prototype.render = function() {
     }
 }
 
-Heart.prototype.checkCollision = function() {
-    if (game.playing && heart.obtained === false) {
-        if (this.x + this.xOffset < player.x + player.width + player.xOffset &&
-            this.x + this.xOffset + this.width > player.x + player.xOffset &&
-            this.y + this.yOffset < player.y + player.yOffset + player.height &&
-            this.height + this.y + this.yOffset > player.y + player.yOffset) {
+Heart.prototype.update = function() {
+    if (this.checkCollision(player) && heart.obtained === false) {
                 heart.obtained = true;
                 game.lives++;
                 document.getElementById('lives-value').innerHTML = game.lives;
         }
-    }
-}
-
-Heart.prototype.update = function() {
-    if (game.playing) {
-        this.checkCollision(player);
-    }
-
 };
 
 Heart.prototype.reset = function() {
@@ -309,7 +304,7 @@ var blueBug = new BlueBug(getRandomInt(-50, -100), 60 + board.tileHeight * 4);
 var allEnemies = [ladyBug, greenBug, yellowBug, blueBug];
 var player = new Player();
 var heart = new Heart(board.tileWidth * getRandomInt(0, 7),
-           80 + board.tileHeight * getRandomInt(0, 6));
+    80 + board.tileHeight * getRandomInt(0, 6));
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
