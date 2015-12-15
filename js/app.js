@@ -258,7 +258,7 @@ Player.prototype.handleInput = function(key) {
 }
 
 var Heart = function(x, y) {
-        Entity.call(this, x, y, 90, 90, 7, 15, 'images/heart.png');
+        Entity.call(this, x, y, 90, 90, 7, 15, 'images/Heart.png');
         // keep track if you got the heart, will be reset at each level
         this.obtained = false;
 }
