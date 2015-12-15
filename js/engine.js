@@ -96,7 +96,8 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
-    }
+        heart.update();
+     }
 
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -169,6 +170,8 @@ var Engine = (function(global) {
         });
 
         player.render();
+
+        heart.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -193,7 +196,8 @@ var Engine = (function(global) {
         'images/enemy-bug-yellow.png',
         'images/enemy-bug-purple.png',
         'images/char-boy.png',
-        'images/char-pink-girl.png'
+        'images/char-pink-girl.png',
+        'images/heart.png'
     ]);
     Resources.onReady(init);
 

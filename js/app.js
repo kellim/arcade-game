@@ -18,9 +18,10 @@ var game = {
     playing: true,
     levelUp: function() {
         this.level += 1;
-        if (this.level > 20) {
+         if (this.level > 20) {
             this.playing = false;
         }
+        heart.reset();
         game.increaseScore(100);
         // increase enemy speed as level increases
         allEnemies.forEach(function(enemy) {
@@ -256,6 +257,48 @@ Player.prototype.handleInput = function(key) {
     }
 }
 
+var Heart = function(x, y) {
+        Entity.call(this, x, y, 90, 90, 7, 15, 'images/heart.png');
+        // keep track if you got the heart, will be reset at each level
+        this.obtained = false;
+}
+Heart.prototype = Object.create(Entity.prototype);
+Heart.prototype.constructor = Entity;
+
+
+Heart.prototype.render = function() {
+    if (game.playing && heart.obtained === false) {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+}
+
+Heart.prototype.checkCollision = function() {
+    if (game.playing && heart.obtained === false) {
+        if (this.x + this.xOffset < player.x + player.width + player.xOffset &&
+            this.x + this.xOffset + this.width > player.x + player.xOffset &&
+            this.y + this.yOffset < player.y + player.yOffset + player.height &&
+            this.height + this.y + this.yOffset > player.y + player.yOffset) {
+                heart.obtained = true;
+                game.lives++;
+                document.getElementById('lives-value').innerHTML = game.lives;
+        }
+    }
+}
+
+Heart.prototype.update = function() {
+    if (game.playing) {
+        this.checkCollision(player);
+    }
+
+};
+
+Heart.prototype.reset = function() {
+    this.obtained = false;
+    this.x = board.tileWidth * getRandomInt(0, 7);
+    this.y = 80 + board.tileHeight * getRandomInt(0, 6);
+
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
@@ -265,6 +308,9 @@ var yellowBug = new YellowBug(getRandomInt(-75, -125),60 + board.tileHeight * 3)
 var blueBug = new BlueBug(getRandomInt(-50, -100), 60 + board.tileHeight * 4);
 var allEnemies = [ladyBug, greenBug, yellowBug, blueBug];
 var player = new Player();
+var heart = new Heart(board.tileWidth * getRandomInt(0, 7),
+           80 + board.tileHeight * getRandomInt(0, 6));
+
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
