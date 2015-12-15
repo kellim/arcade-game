@@ -23,6 +23,7 @@ var game = {
             this.playing = false;
         }
         heart.reset();
+        gem.reset();
         game.increaseScore(100);
         // increase enemy speed as level increases
         allEnemies.forEach(function(enemy) {
@@ -274,14 +275,14 @@ Heart.prototype.constructor = Entity;
 
 
 Heart.prototype.render = function() {
-    if (game.playing && heart.obtained === false) {
+    if (game.playing && this.obtained === false) {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
 }
 
 Heart.prototype.update = function() {
-    if (this.checkCollision(player) && heart.obtained === false) {
-                heart.obtained = true;
+    if (this.checkCollision(player) && this.obtained === false) {
+                this.obtained = true;
                 game.lives++;
                 document.getElementById('lives-value').innerHTML = game.lives;
         }
@@ -294,6 +295,37 @@ Heart.prototype.reset = function() {
 
 }
 
+// Gem object constructor
+var Gem = function(x, y, color) {
+        Entity.call(this, x, y, 95, 105, 4, 21, 'images/gem-orange.png');
+        // keep track if you got the gem, will be reset at each level
+        this.obtained = false;
+        this.color = color;
+}
+Gem.prototype = Object.create(Entity.prototype);
+Gem.prototype.constructor = Entity;
+
+Gem.prototype.render = function() {
+    if (game.playing && this.obtained === false) {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+};
+
+Gem.prototype.update = function() {
+    if (this.checkCollision(player) && this.obtained === false) {
+                this.obtained = true;
+                game.increaseScore(500);
+                document.getElementById('score-value').innerHTML = game.score;
+        }
+};
+
+Gem.prototype.reset = function() {
+    this.obtained = false;
+    this.x = board.tileWidth * getRandomInt(0, 7);
+    this.y = 80 + board.tileHeight * getRandomInt(0, 6);
+};
+
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
@@ -305,7 +337,8 @@ var allEnemies = [ladyBug, greenBug, yellowBug, blueBug];
 var player = new Player();
 var heart = new Heart(board.tileWidth * getRandomInt(0, 7),
     80 + board.tileHeight * getRandomInt(0, 6));
-
+var gem = new Gem(board.tileWidth * getRandomInt(0, 7),
+    80 + board.tileHeight * getRandomInt(0, 6));
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {

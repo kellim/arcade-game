@@ -93,6 +93,7 @@ var Engine = (function(global) {
      */
     function updateEntities(dt) {
         heart.update();
+        gem.update();
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
@@ -166,6 +167,7 @@ var Engine = (function(global) {
          * the render function you have defined.
          */
         heart.render();
+        gem.render();
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
@@ -198,7 +200,8 @@ var Engine = (function(global) {
         'images/enemy-bug-purple.png',
         'images/char-boy.png',
         'images/char-pink-girl.png',
-        'images/Heart.png'
+        'images/Heart.png',
+        'images/gem-orange.png'
     ]);
     Resources.onReady(init);
 
