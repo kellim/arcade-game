@@ -1,100 +1,85 @@
-var board = {
-    width: 707,
-    height: 704,
-    tileHeight: 83,
-    tileWidth: 101
-};
-
-// The player starts at and cannot move past yLimit
-board.yLimit = board.height - board.tileHeight - 47;
-
+// The game object stores information about the game, its board dimensions,
+// and has functions to help update game information, and to level up.
 var game = {
     level: 1,
     score: 0,
     lives: 3,
-    increaseScore: function(points) { this.score += points;},
-    decreaseScore: function(points) { this.score -= points;},
+    playing: true, // the game starts right away
+    board: {
+        width: 707,
+        height: 704,
+        tileHeight: 83,
+        tileWidth: 101
+    },
+    writeScore: function() {
+        document.getElementById('score-value').innerHTML = this.score;
+    },
+    writeLives: function() {
+        document.getElementById('lives-value').innerHTML = game.lives;
+    },
+    writeLevel: function() {
+        document.getElementById('level-value').innerHTML = game.level;
+    },
+    increaseScore: function(points) {
+        this.score += points;
+        this.writeScore();
+    },
+    decreaseScore: function(points) {
+        this.score -= points;
+        this.writeScore();
+    },
+    extraLife: function() {
+        this.lives++;
+        this.writeLives();
+    },
+    loseLife: function() {
+        this.lives--;
+        this.writeLives();
+    },
     startPlaying: function() {this.playing = false;},
     stopPlaying: function() {this.playing = true;},
-    playing: true,
     levelUp: function() {
-        this.level += 1;
-         if (this.level > 20) {
+        // The game is over once you beat level 20.
+        if (this.level >= 20) {
             this.playing = false;
-        }
-        heart.reset();
-        gem.reset();
-        game.increaseScore(100);
-        // increase enemy speed as level increases
-        allEnemies.forEach(function(enemy) {
-            if (this.level > 10) {
-                enemy.increaseSpeed(getRandomInt(10, 20));
-            } else {
-                enemy.increaseSpeed(getRandomInt(5,15));
-            }
-        });
-        // Add additional enemies at alternating levels
-        switch(this.level) {
-            case 2:
-                var ladyBug2 = new LadyBug(getRandomInt(-100, -200), 60 + board.tileHeight * 3);
-                allEnemies.push(ladyBug2);
-                break;
-            case 4:
-                var yellowBug2 = new YellowBug(getRandomInt(-100, -250), 60 + board.tileHeight * 2);
-                allEnemies.push(yellowBug2);
-                break;
-            case 6:
-                var greenBug2 = new GreenBug(getRandomInt(-100, -175), 60 + board.tileHeight);
-                allEnemies.push(greenBug2);
-                break;
-            case 8:
-                var blueBug2 = new BlueBug(getRandomInt(-100, -225), 60 + board.tileHeight * 4);
-                allEnemies.push(blueBug2);
-                break;
-            case 10:
-                var purpleBug = new PurpleBug(getRandomInt(-150, -250), 60 + board.tileHeight * 5);
-                allEnemies.push(purpleBug);
-                break;
-            case 12:
-                var purpleBug2 = new PurpleBug(getRandomInt(-100, -200), 60 + board.tileHeight * 5);
-                allEnemies.push(purpleBug2);
-                break;
-            case 14:
-                var purpleBug3 = new PurpleBug(getRandomInt(-150, -250), 60);
-                allEnemies.push(purpleBug3);
-                break;
-            case 16:
-                var purpleBug4 = new PurpleBug(getRandomInt(-100, -200), 60);
-                allEnemies.push(purpleBug4);
-                break;
-            case 18:
-                var yellowBug2 = new YellowBug(getRandomInt(-150, -200), -25);
-                allEnemies.push(yellowBug2);
-                break;
-            case 20:
-                var yellowBug3 = new YellowBug(getRandomInt(-150, -200), -25);
-                allEnemies.push(yellowBug3);
-                break;
+        } else {
+            this.level ++;
+            heart.reset();
+            // Speed up Enemies a little each level.
+            allEnemies.forEach(function(enemy) {
+                enemy.levelUp();
+            });
+            // Place the gem, and if it overlaps the heart, place the gem
+            // again until it is in a different spot than the heart.
+            do {
+                gem.reset();
+            } while (gem.checkCollision(heart));
+            this.writeLevel();
+            this.increaseScore(100);
+            addEnemies(this, this.level);
         }
     }
 };
 
-// Function code from Mozilla Developer Network
-// Returns a random integer between min (inclusive) and max (exclusive)
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
+// The player starts at and cannot move past yLimit
+game.board.yLimit = game.board.height - game.board.tileHeight - 47;
 
 // Entity object constructor
+// Parameters: x, y, width, height, xOffset, yOffset, sprite
+// x and y are coordinates the entity is located at on the game board.
+// width and height are the width and height of the entity within the image.
+// xOffset and yOffset are whitespace on the sides and top of the entity
+// in the image respsectively.
+// sprite is the image url. A provided helper loads the images.
 var Entity = function(x, y, width, height, xOffset, yOffset, sprite) {
     this.x = x;
     this.y = y;
-    this.width = width;     // width of entity in the image
-    this.height = height;   // height of the entity within the image
-    this.xOffset = xOffset; // whitespace on the sides of the entity in the image
-    this.yOffset = yOffset; // whitespace on the top of entity in the image
-    this.sprite = sprite;   // uses provided helper to easily load images
-}
+    this.width = width;
+    this.height = height;
+    this.xOffset = xOffset;
+    this.yOffset = yOffset;
+    this.sprite = sprite;
+};
 
 // Collision detection uses axis-aligned bounding box code adapted from MDN
 // https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
@@ -109,16 +94,25 @@ Entity.prototype.checkCollision = function(otherEntity) {
             return false;
         }
     }
-}
+};
 
+// An object's render function is called by renderEntities() in engine.js;
+// If you add additional types of entities, you will need to update that
+// function.
+Entity.prototype.render = function() {
+    if (game.playing) {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+};
 
+// Enemy object constructor
+// Parameters: x, y, speed, yOffset, height, sprite are passed to the
+// Entity constructor along with a width of 98 and xOffset of 1.
+// unique parameter: speed, the speed of the enemy
 var Enemy = function(x, y, speed, yOffset, height, sprite) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
         Entity.call(this, x, y, 98, height, 1, yOffset, sprite);
         this.speed = speed;
 };
-
 Enemy.prototype = Object.create(Entity.prototype);
 Enemy.prototype.constructor = Entity;
 
@@ -134,106 +128,114 @@ Enemy.prototype.update = function(dt) {
             if (game.score > 0) {
                 game.decreaseScore(50);
             }
-            game.lives--;
-            document.getElementById('lives-value').innerHTML = game.lives;
+            game.loseLife();
             if (game.lives > 0) {
                 player.reset();
             } else {
                 game.playing = false;
             }
         }
-        if (this.x > board.width) {
+        if (this.x > game.board.width) {
             this.x = -150;
         }
     }
 };
 
-
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    if (game.playing) {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-};
-
+// Increase enemy speed
+// Parameter: amount (how much you want to increase the speed by)
 Enemy.prototype.increaseSpeed = function(amount) {
     this.speed += amount;
 };
 
-//Create LadyBug Object
+// Action(s) to perform at each new level: Speed up the enemy a
+// small random amount based on level.
+// Parameters: game (object) and level (the level the game is on)
+Enemy.prototype.levelUp = function(game, level) {
+    if (this.level > 10) {
+        this.increaseSpeed(getRandomInt(10, 20));
+    } else {
+        this.increaseSpeed(getRandomInt(5,15));
+    }
+};
+
+// LadyBug object constructor
+// Parameters: x, y (coordinates) will be passed to the Enemy constructor.
+// A randomized speed between 50 and 100 is passed to the Enemy constructor,
+// as well as a yOffset of 77, height of 67, and the image URL for sprite.
 var LadyBug = function(x, y) {
     Enemy.call(this, x, y, getRandomInt(50, 100), 77, 67, 'images/enemy-bug.png');
 };
 LadyBug.prototype = Object.create(Enemy.prototype);
 LadyBug.prototype.constructor = Enemy;
 
-// Create GreenBug Object
+// GreenBug object constructor
+// Parameters: x, y (coordinates) will be passed to the Enemy constructor.
+// A randomized speed between 125 and 225 is passed to the Enemy constructor,
+// as well as a yOffset of 79, height of 53, and the image URL for sprite.
 var GreenBug = function(x, y) {
     Enemy.call(this, x, y, getRandomInt(125, 225), 79, 53, 'images/enemy-bug-green.png');
 };
 GreenBug.prototype = Object.create(Enemy.prototype);
 GreenBug.prototype.constructor = Enemy;
 
-// Create YellowBug Object
+// YellowBug object constructor
+// Parameters: x, y (coordinates) will be passed to the Enemy constructor.
+// A randomized speed between 175 and 250 is passed to the Enemy constructor,
+// as well as a yOffset of 73, height of 76, and the image URL for sprite.
 var YellowBug = function(x, y) {
     Enemy.call(this, x, y, getRandomInt(175, 250), 73, 76, 'images/enemy-bug-yellow.png');
 };
 YellowBug.prototype = Object.create(Enemy.prototype);
 YellowBug.prototype.constructor = Enemy;
 
-// Create BlueBug Object
+// BlueBug object constructor
+// Parameters: x, y (coordinates) will be passed to the Enemy constructor.
+// A randomized speed between 150 and 225 is passed to the Enemy constructor,
+// as well as a yOffset of 79, height of 52, and the image URL for sprite.
 var BlueBug = function(x, y) {
     Enemy.call(this, x, y, getRandomInt(150, 225), 79, 52, 'images/enemy-bug-blue.png');
 };
 BlueBug.prototype = Object.create(Enemy.prototype);
 BlueBug.prototype.constructor = Enemy;
 
-// Create PurpleBug Object
+// PurpleBug object constructor
+// Parameters: x, y (coordinates) will be passed to the Enemy constructor.
+// A randomized speed between 75 and 175 is passed to the Enemy constructor,
+// as well as a yOffset of 77, height of 67, and the image URL for sprite.
 var PurpleBug = function(x, y) {
     Enemy.call(this, x, y, getRandomInt(75, 175), 77, 67, 'images/enemy-bug-purple.png');
 };
 PurpleBug.prototype = Object.create(Enemy.prototype);
 PurpleBug.prototype.constructor = Enemy;
 
-
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+// Player object constructor
+// Calculated x coordinates, calculated y coordinates, width of 67, height of 76,
+// xOffset of 17, yOffset of 64, and the image URL for the sprite are being passed to the
+// Entity constructor.
 var Player = function() {
-        Entity.call(this, board.tileWidth * 3, board.yLimit, 67, 76, 17, 64,
-                    'images/char-pink-girl.png');
-}
-
+        Entity.call(this, game.board.tileWidth * 3, game.board.yLimit, 67, 76, 17, 64,
+            'images/char-pink-girl.png');
+};
 Player.prototype = Object.create(Entity.prototype);
 Player.prototype.constructor = Entity;
 
+// Reset player by moving back to starting position
 Player.prototype.reset = function() {
-    if (game.playing) {
-        // Put player back at the starting position
-        this.x = board.tileWidth * 3;
-        this.y = board.yLimit;
-        // Update the score
-        document.getElementById('score-value').innerHTML = game.score;
-        // Update the Level
-        document.getElementById('level-value').innerHTML = game.level;
-    }
+    this.x = game.board.tileWidth * 3;
+    this.y = game.board.yLimit;
 };
 
+// When player gets to the other side and has "beat a level"
+// call function to reset player and for leveling up in the game
 Player.prototype.update = function() {
     if (game.playing) {
+        // player made it to the top where y <= 0
         if (this.y <= 0) {
-            game.levelUp();
             player.reset();
+            game.levelUp();
         }
     }
 };
-
-Player.prototype.render = function() {
-    if (game.playing) {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-}
 
 // Move the player left, right, up, or down based on
 // the arrow key the user presses. It also prevents
@@ -243,104 +245,182 @@ Player.prototype.handleInput = function(key) {
         switch(key) {
             case 'left':
                 if (this.x > 0) {
-                   this.x -= board.tileWidth;
+                    this.x -= game.board.tileWidth;
                 }
                 break;
             case 'right':
-                if (this.x < board.width - board.tileWidth) {
-                    this.x += board.tileWidth;
+                if (this.x < game.board.width - game.board.tileWidth) {
+                    this.x += game.board.tileWidth;
                 }
                 break;
             case 'up':
                 if (this.y > 0) {
-                    this.y -= board.tileHeight;
+                    this.y -= game.board.tileHeight;
                 }
                 break;
             case 'down':
-                if (this.y < board.yLimit) {
-                    this.y += board.tileHeight;
+                if (this.y < game.board.yLimit) {
+                    this.y += game.board.tileHeight;
                 }
                 break;
         }
     }
-}
-
-var Heart = function(x, y) {
-        Entity.call(this, x, y, 90, 90, 7, 15, 'images/Heart.png');
-        // keep track if you got the heart, will be reset at each level
-        this.obtained = false;
-}
-Heart.prototype = Object.create(Entity.prototype);
-Heart.prototype.constructor = Entity;
-
-
-Heart.prototype.render = function() {
-    if (game.playing && this.obtained === false) {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-}
-
-Heart.prototype.update = function() {
-    if (this.checkCollision(player) && this.obtained === false) {
-                this.obtained = true;
-                game.lives++;
-                document.getElementById('lives-value').innerHTML = game.lives;
-        }
 };
 
-Heart.prototype.reset = function() {
-    this.obtained = false;
-    this.x = board.tileWidth * getRandomInt(0, 7);
-    this.y = 80 + board.tileHeight * getRandomInt(0, 6);
+// Item object constructor
+// Parameters x, y, width, height, xOffset, yOffset, and sprite
+// are being passed to the Entity constructor.
+var Item = function(x, y, width, height, xOffset, yOffset, sprite) {
+        Entity.call(this, x, y, width, height, xOffset, yOffset, sprite);
+        // Unique property obtained keeps track if the player got the item.
+        // Intended to be set to true when the player touches the item,
+        // and to be reset to false at the beginning of each level.
+        this.obtained = false;
+};
+Item.prototype = Object.create(Entity.prototype);
+Item.prototype.constructor = Entity;
 
-}
+// Reset the item, intended to be run at the start of each level.
+// It resets the object's obtained property to false and moves it to
+// a new random location (tile) on the board except for on the grass.
+Item.prototype.reset = function() {
+    this.obtained = false;
+    this.x = game.board.tileWidth * getRandomInt(0, 7);
+    this.y = 80 + game.board.tileHeight * getRandomInt(0, 6);
+};
+
+// When the player is touching the item, set the item's obtained
+// value to true, and run that object's success function. The success
+// function is unique to each item and is the action to take once
+// the player obtained the item at that level.
+Item.prototype.update = function() {
+    if (this.checkCollision(player) && this.obtained === false) {
+        this.obtained = true;
+        if (typeof this.success === 'function') {
+            this.success();
+        }
+    }
+};
+
+// Heart object constructor.
+// Parameters: x, y (coordinates) will be passed to the Item constructor.
+// A width of 90, height of 90, xOffset of 7, yOffset of 53 (see note), and
+// the image URL for the sprite are being passed to the Item constructor.
+// Note: The real yOffset of the heart image is 48 but using 53 instead
+// because the heart goes beyond the top of the tile and I want the player
+// to be on the tile with the majority of the heart to obtain it.
+var Heart = function(x, y) {
+    Item.call(this, x, y, 90, 90, 7, 53, 'images/Heart.png');
+};
+Heart.prototype = Object.create(Item.prototype);
+Heart.prototype.constructor = Item;
+
+// Action(s) to perform when heart is successfully obtained:
+// Gain an extra life
+Heart.prototype.success = function() {
+    game.extraLife();
+};
 
 // Gem object constructor
-var Gem = function(x, y, color) {
-        Entity.call(this, x, y, 95, 105, 4, 21, 'images/gem-orange.png');
-        // keep track if you got the gem, will be reset at each level
-        this.obtained = false;
-        this.color = color;
-}
-Gem.prototype = Object.create(Entity.prototype);
-Gem.prototype.constructor = Entity;
+// Parameters: x, y (coordinates) will be passed to the Item constructor.
+// A width of 95, height of 85 (see note), xOffset of 4, yOffset of 58, and
+// the image URL for the sprite are being passed to the Item constructor.
+// Note: The real height of the gem image is 105 but using 85 for height instead
+// because the gem goes beyond the bottom of the tile and I want the player
+// to be on the tile with the majority of the gem to obtain it.
+var Gem = function(x, y) {
+        Item.call(this, x, y, 95, 85, 4, 58, 'images/gem-orange.png');
+};
+Gem.prototype = Object.create(Item.prototype);
+Gem.prototype.constructor = Item;
 
-Gem.prototype.render = function() {
-    if (game.playing && this.obtained === false) {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
+// Action(s) to perform when gem is successfully obtained:
+// Increase score by 500.
+Gem.prototype.success = function() {
+        game.increaseScore(500);
 };
 
-Gem.prototype.update = function() {
-    if (this.checkCollision(player) && this.obtained === false) {
-                this.obtained = true;
-                game.increaseScore(500);
-                document.getElementById('score-value').innerHTML = game.score;
-        }
-};
-
-Gem.prototype.reset = function() {
-    this.obtained = false;
-    this.x = board.tileWidth * getRandomInt(0, 7);
-    this.y = 80 + board.tileHeight * getRandomInt(0, 6);
-};
-
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-var ladyBug = new LadyBug(getRandomInt(-175, -250), 60 + board.tileHeight);
-var greenBug = new GreenBug(getRandomInt(-125, -225), 60 + board.tileHeight *2);
-var yellowBug = new YellowBug(getRandomInt(-75, -125),60 + board.tileHeight * 3);
-var blueBug = new BlueBug(getRandomInt(-50, -100), 60 + board.tileHeight * 4);
-var allEnemies = [ladyBug, greenBug, yellowBug, blueBug];
+// Instantiate initial objects.
+var ladyBug = new LadyBug(getRandomInt(-175, -250), 60 + game.board.tileHeight);
+var greenBug = new GreenBug(getRandomInt(-125, -225), 60 + game.board.tileHeight *2);
+var yellowBug = new YellowBug(getRandomInt(-75, -125),60 + game.board.tileHeight * 3);
+var blueBug = new BlueBug(getRandomInt(-50, -100), 60 + game.board.tileHeight * 4);
 var player = new Player();
-var heart = new Heart(board.tileWidth * getRandomInt(0, 7),
-    80 + board.tileHeight * getRandomInt(0, 6));
-var gem = new Gem(board.tileWidth * getRandomInt(0, 7),
-    80 + board.tileHeight * getRandomInt(0, 6));
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+var heart = new Heart(game.board.tileWidth * getRandomInt(0, 7),
+    80 + game.board.tileHeight * getRandomInt(0, 6));
+var gem = new Gem(game.board.tileWidth * getRandomInt(0, 7),
+    80 + game.board.tileHeight * getRandomInt(0, 6));
+// Make sure gem is not placed where it overlaps the heart
+while (gem.checkCollision(heart)) {
+    gem.reset();
+}
+
+// Any new enemy added must be placed in the allEnemies array.
+// engine.js loops through the array to render enemies.
+var allEnemies = [ladyBug, greenBug, yellowBug, blueBug];
+
+// Add new enemies at even levels. Used a switch, but JSLint gave an error
+// to not declare variables in a switch, and since these are
+// objects being created, you can't declare them ahead of time.
+// I looked for another way to do this and found this article:
+// http://davidbcalhoun.com/2010/is-hash-faster-than-switch-in-javascript/
+// which is where the below code in tne addEnemies function is adapted from.
+function addEnemies(game, level) {
+    var cases = {};
+    cases[2] = function() {
+        var ladyBug2 = new LadyBug(getRandomInt(-100, -200), 60 + game.board.tileHeight * 3);
+        allEnemies.push(ladyBug2);
+    };
+    cases[4] = function() {
+        var yellowBug2 = new YellowBug(getRandomInt(-100, -250), 60 + game.board.tileHeight * 2);
+        allEnemies.push(yellowBug2);
+    };
+    cases[6] = function() {
+        var greenBug2 = new GreenBug(getRandomInt(-100, -175), 60 + game.board.tileHeight);
+        allEnemies.push(greenBug2);
+    };
+    cases[8] = function() {
+        var blueBug2 = new BlueBug(getRandomInt(-100, -225), 60 + game.board.tileHeight * 4);
+        allEnemies.push(blueBug2);
+    };
+    cases[10] = function() {
+        var purpleBug = new PurpleBug(getRandomInt(-150, -250), 60 + game.board.tileHeight * 5);
+        allEnemies.push(purpleBug);
+    };
+    cases[12] = function() {
+        var purpleBug2 = new PurpleBug(getRandomInt(-100, -200), 60 + game.board.tileHeight * 5);
+        allEnemies.push(purpleBug2);
+    };
+    cases[14] = function() {
+        var purpleBug3 = new PurpleBug(getRandomInt(-150, -250), 60);
+        allEnemies.push(purpleBug3);
+    };
+    cases[16] = function() {
+        var purpleBug4 = new PurpleBug(getRandomInt(-100, -200), 60);
+        allEnemies.push(purpleBug4);
+    };
+    cases[18] = function() {
+        var yellowBug2 = new YellowBug(getRandomInt(-150, -200), -25);
+        allEnemies.push(yellowBug2);
+    };
+    cases[20] = function() {
+        var yellowBug3 = new YellowBug(getRandomInt(-150, -200), -25);
+        allEnemies.push(yellowBug3);
+    };
+    if(typeof cases[level] === 'function') {
+        // Only executes if defined above.
+         cases[level]();
+    }
+}
+
+// Function code is from from Mozilla Developer Network
+// Returns a random integer between min (inclusive) and max (exclusive)
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// This listens for key presses and sends the keys to the
+// Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -348,7 +428,5 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
-
 });

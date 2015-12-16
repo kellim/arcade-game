@@ -166,8 +166,12 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        heart.render();
-        gem.render();
+        if (!heart.obtained) {
+            heart.render();
+        }
+        if (!gem.obtained) {
+            gem.render();
+        }
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
