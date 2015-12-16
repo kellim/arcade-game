@@ -5,9 +5,6 @@ frontend-nanodegree-arcade-game
 ## How to Play:
 You can play the game at http://kellim.github.io/frontend-nanodegree-arcade-game/
 
-###Movement
-
-
 ###Gameplay and Objective
 Each level, you'll start in the grass at the bottom, and you'll need to cross the road to get to the grass at the top. Once you reach the grass at the top, you'll be awarded 100 points and find yourself back at the bottom ready to start the next level.
 
