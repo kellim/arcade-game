@@ -144,19 +144,22 @@ var Engine = (function(global) {
             renderEntities();
         } else {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle='green';
+            var message = "";
+            if (game.lives > 0) {
+               ctx.fillStyle='green';
+               message = "YOU WON!";
+            } else {
+                ctx.fillStyle='red';
+                message = "YOU LOST!";
+            }
+
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.font = "5em Arial";
             ctx.fillText("GAME OVER", 335.5, 404);
-            if (game.lives > 0) {
-                ctx.fillText("YOU WON!", 335.5, 505);
-            } else {
-                ctx.fillText("YOU LOST!", 335.5, 505);
-            }
-
-        }
+            ctx.fillText(message, 335.5, 505);
     }
+}
 
     /* This function is called by the render function and is called on each game
      * tick. It's purpose is to then call the render functions you have defined
@@ -213,6 +216,4 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
-
-
 })(this);
