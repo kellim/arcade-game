@@ -110,8 +110,8 @@ Entity.prototype.render = function() {
 // Entity constructor along with a width of 98 and xOffset of 1.
 // unique parameter: speed, the speed of the enemy
 var Enemy = function(x, y, speed, yOffset, height, sprite) {
-        Entity.call(this, x, y, 98, height, 1, yOffset, sprite);
-        this.speed = speed;
+    Entity.call(this, x, y, 98, height, 1, yOffset, sprite);
+    this.speed = speed;
 };
 Enemy.prototype = Object.create(Entity.prototype);
 Enemy.prototype.constructor = Entity;
@@ -213,8 +213,8 @@ PurpleBug.prototype.constructor = Enemy;
 // xOffset of 17, yOffset of 64, and the image URL for the sprite are being passed to the
 // Entity constructor.
 var Player = function() {
-        Entity.call(this, game.board.tileWidth * 3, game.board.yLimit, 67, 76, 17, 64,
-            'images/char-pink-girl.png');
+    Entity.call(this, game.board.tileWidth * 3, game.board.yLimit, 67, 76, 17, 64,
+        'images/char-pink-girl.png');
 };
 Player.prototype = Object.create(Entity.prototype);
 Player.prototype.constructor = Entity;
@@ -271,11 +271,11 @@ Player.prototype.handleInput = function(key) {
 // Parameters x, y, width, height, xOffset, yOffset, and sprite
 // are being passed to the Entity constructor.
 var Item = function(x, y, width, height, xOffset, yOffset, sprite) {
-        Entity.call(this, x, y, width, height, xOffset, yOffset, sprite);
-        // Unique property obtained keeps track if the player got the item.
-        // Intended to be set to true when the player touches the item,
-        // and to be reset to false at the beginning of each level.
-        this.obtained = false;
+    Entity.call(this, x, y, width, height, xOffset, yOffset, sprite);
+    // Unique property obtained keeps track if the player got the item.
+    // Intended to be set to true when the player touches the item,
+    // and to be reset to false at the beginning of each level.
+    this.obtained = false;
 };
 Item.prototype = Object.create(Entity.prototype);
 Item.prototype.constructor = Entity;
@@ -329,7 +329,7 @@ Heart.prototype.success = function() {
 // because the gem goes beyond the bottom of the tile and I want the player
 // to be on the tile with the majority of the gem to obtain it.
 var Gem = function(x, y) {
-        Item.call(this, x, y, 95, 85, 4, 58, 'images/gem-orange.png');
+    Item.call(this, x, y, 95, 85, 4, 58, 'images/gem-orange.png');
 };
 Gem.prototype = Object.create(Item.prototype);
 Gem.prototype.constructor = Item;
@@ -337,7 +337,7 @@ Gem.prototype.constructor = Item;
 // Action(s) to perform when gem is successfully obtained:
 // Increase score by 500.
 Gem.prototype.success = function() {
-        game.increaseScore(500);
+    game.increaseScore(500);
 };
 
 // Instantiate initial objects.
@@ -418,6 +418,7 @@ function addEnemies(game, level) {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
+
 $(document).ready(function(){
     // The Start New Game button will start a new game by reloading
     // the webpage.
