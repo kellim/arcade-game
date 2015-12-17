@@ -3,25 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>Bug Crossing</title>
-    <link href='https://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet'>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-
+    <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Indie+Flower'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h1>Bug Crossing</h1>
-    <div class="level">Level: <span id="level-value">1</span></div>
-    <div class="score">Score: <span id="score-value">0</span></div>
-    <div class="lives">Lives: <span id="lives-value">3</span></div>
+    <div class="row">
+        <div class="col-sm-12 text-center"><h1>Bug Crossing</h1></div>
+    </div>
+
+    <div class="row stats">
+        <div class="col-sm-9">
+            <div>Level: <span id="level-value">1</span></div>
+            <div>Score: <span id="score-value">0</span></div>
+        </div>
+        <div class="col-sm-3">
+            <div>Lives: <span id="lives-value">3</span></div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- The canvas will be loaded in the game div below -->
+        <div class="col-sm-12" id="game"></div>
+    </div>
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
-    <h2>How to Play</h2>
-    <div class="info">
-    <ul>
-        <li>You can move using the up, down, left, and right arrow keys.
-        <li>Starting in the grass, you need to cross the road while avoiding bugs and get to the water, which will gain you 100 points.
-        <li>If you collide with a bug, you lose 50 points and go back to your starting place in the grass.
-        </ul>
+    <div class="row">
+        <div class="buttons col-sm-12 text-center">
+            <button type="button" class="btn btn-warning" id="btn-start-game">Start New Game</button>
+            <button type="button" class="btn btn-warning" id="btn-how-to-play" data-toggle="modal" data-target="#instructions">
+            How to Play</button>
+        </div>
     </div>
+
+    <!-- Instructions Modal -->
+    <div class="modal fade" id="instructions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel1">Bug Crossing Instructions</h4>
+          </div>
+          <div class="modal-body">
+            <h2>Gameplay and Objective</h2>
+
+            <p>Each level, you'll start in the grass at the bottom, and you'll
+            need to cross the road to get to the grass at the top. Once you
+            reach the grass at the top, you'll be awarded 100 points and find
+            yourself back at the bottom ready to start the next level.</p>
+
+            <p>You can move using the up, down, left, and right arrow keys.</p>
+
+            <p>If you collide with a bug, you lose 50 points and go back to your starting place in the grass.</p>
+
+            <p>Each level, you will have an opportunity to get a heart and a gem. The heart gives you an extra
+            life and the gem gives you 500 points.</p>
+
+            <p>To win the game, you must pass all 20 levels.</p>
+
+            <p>BEWARE: As you level up, the bugs get faster, and you'll also notice more bugs!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Instructions Modal -->
 </body>
 </html>

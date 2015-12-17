@@ -12,13 +12,13 @@ var game = {
         tileWidth: 101
     },
     writeScore: function() {
-        document.getElementById('score-value').innerHTML = this.score;
+        $('#score-value').html(this.score);
     },
     writeLives: function() {
-        document.getElementById('lives-value').innerHTML = game.lives;
+        $('#lives-value').html(this.lives);
     },
     writeLevel: function() {
-        document.getElementById('level-value').innerHTML = game.level;
+        $('#level-value').html(this.level);
     },
     increaseScore: function(points) {
         this.score += points;
@@ -418,6 +418,13 @@ function addEnemies(game, level) {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
+$(document).ready(function(){
+    // The Start New Game button will start a new game by reloading
+    // the webpage.
+    $('#btn-start-game').click(function(){
+        location.reload();
+    });
+});
 
 // This listens for key presses and sends the keys to the
 // Player.handleInput() method.

@@ -27,7 +27,9 @@ var Engine = (function(global) {
 
     canvas.width = 707;
     canvas.height = 808;
-    doc.body.appendChild(canvas);
+    // Changed code to append canvas to div instead of body so it can be styled better.
+    var gameBoard = document.getElementById('game');
+    gameBoard.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -152,7 +154,6 @@ var Engine = (function(global) {
                 ctx.fillStyle='red';
                 message = "YOU LOST!";
             }
-
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.font = "5em Arial";
@@ -169,6 +170,9 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+
+         // Only render the heart and gem if they were not yet obtained in
+         // the current level.
         if (!heart.obtained) {
             heart.render();
         }
@@ -178,7 +182,6 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
         player.render();
 
 

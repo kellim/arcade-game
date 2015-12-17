@@ -1,41 +1,39 @@
-canvas {
-    padding: 0;
-    margin: auto;
-    display: block;
-    width: 505px;
-}
-
-h1, h2 {
-  color: #a9054a;
-  text-align: center;
-}
-
 h1 {
-  font: 2em 'Luckiest Guy', sans-serif;
-}
-
-h2 {
-  font: 2em 'Luckiest Guy', sans-serif;
-}
-
-h1, h2, div {
-  padding: 0px;
-  margin: 0px;
-}
-
-li {
-    list-style: none;
-}
-
-.info, .score, .level, .lives {
-  padding: 0;
-  margin: auto;
-  width: 505px;
-}
-
-.score, .level, .lives {
+    font: 3em 'Indie Flower', cursive;
+    color: #ffa500;
     font-weight: bold;
-    font-family: 'Courier New', monospace;
-    font-size: 1.25em;
-    text-align: left;
 }
+
+.row {
+    margin: 0px;
+}
+.stats {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 1.25em;
+    max-width: 505px;
+    margin: auto;
+}
+
+.modal-body {
+  font-family: Arial, sans-serif;
+}
+
+canvas {
+    width: 100%;
+    max-width: 505px;
+    max-height: 606px;
+}
+
+.btn {
+    margin: 1em;
+}
+
+/* Styling using an ID, since it was needed for JavaScript purposes */
+#game {
+    float: none;
+    margin: auto;
+    max-width: 505px;
+    width: 100%;
+}
+
