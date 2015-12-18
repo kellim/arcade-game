@@ -6,10 +6,10 @@ var game = {
     lives: 3,
     playing: true, // the game starts right away
     board: {
-        width: 707,
-        height: 704,
-        tileHeight: 83,
-        tileWidth: 101
+        WIDTH: 707,
+        HEIGHT: 704,
+        TILE_HEIGHT: 83,
+        TILE_WIDTH: 101
     },
     writeScore: function() {
         $('#score-value').html(this.score);
@@ -61,8 +61,8 @@ var game = {
     }
 };
 
-// The player starts at and cannot move past yLimit
-game.board.yLimit = game.board.height - game.board.tileHeight - 47;
+// The player starts at and cannot move past Y_LIMIT
+game.board.Y_LIMIT = game.board.HEIGHT - game.board.TILE_HEIGHT - 47;
 
 // Entity object constructor
 // Parameters: x, y, width, height, xOffset, yOffset, sprite
@@ -135,7 +135,7 @@ Enemy.prototype.update = function(dt) {
                 game.playing = false;
             }
         }
-        if (this.x > game.board.width) {
+        if (this.x > game.board.WIDTH) {
             this.x = -150;
         }
     }
@@ -213,7 +213,7 @@ PurpleBug.prototype.constructor = Enemy;
 // xOffset of 17, yOffset of 64, and the image URL for the sprite are being passed to the
 // Entity constructor.
 var Player = function() {
-    Entity.call(this, game.board.tileWidth * 3, game.board.yLimit, 67, 76, 17, 64,
+    Entity.call(this, game.board.TILE_WIDTH * 3, game.board.Y_LIMIT, 67, 76, 17, 64,
         'images/char-pink-girl.png');
 };
 Player.prototype = Object.create(Entity.prototype);
@@ -221,8 +221,8 @@ Player.prototype.constructor = Entity;
 
 // Reset player by moving back to starting position
 Player.prototype.reset = function() {
-    this.x = game.board.tileWidth * 3;
-    this.y = game.board.yLimit;
+    this.x = game.board.TILE_WIDTH * 3;
+    this.y = game.board.Y_LIMIT;
 };
 
 // When player gets to the other side and has "beat a level"
@@ -231,7 +231,7 @@ Player.prototype.update = function() {
     if (game.playing) {
         // player made it to the top where y <= 0
         if (this.y <= 0) {
-            player.reset();
+            this.reset();
             game.levelUp();
         }
     }
@@ -245,22 +245,22 @@ Player.prototype.handleInput = function(key) {
         switch(key) {
             case 'left':
                 if (this.x > 0) {
-                    this.x -= game.board.tileWidth;
+                    this.x -= game.board.TILE_WIDTH;
                 }
                 break;
             case 'right':
-                if (this.x < game.board.width - game.board.tileWidth) {
-                    this.x += game.board.tileWidth;
+                if (this.x < game.board.WIDTH - game.board.TILE_WIDTH) {
+                    this.x += game.board.TILE_WIDTH;
                 }
                 break;
             case 'up':
                 if (this.y > 0) {
-                    this.y -= game.board.tileHeight;
+                    this.y -= game.board.TILE_HEIGHT;
                 }
                 break;
             case 'down':
-                if (this.y < game.board.yLimit) {
-                    this.y += game.board.tileHeight;
+                if (this.y < game.board.Y_LIMIT) {
+                    this.y += game.board.TILE_HEIGHT;
                 }
                 break;
         }
@@ -285,8 +285,8 @@ Item.prototype.constructor = Entity;
 // a new random location (tile) on the board except for on the grass.
 Item.prototype.reset = function() {
     this.obtained = false;
-    this.x = game.board.tileWidth * getRandomInt(0, 7);
-    this.y = 80 + game.board.tileHeight * getRandomInt(0, 6);
+    this.x = game.board.TILE_WIDTH * getRandomInt(0, 7);
+    this.y = 80 + game.board.TILE_HEIGHT * getRandomInt(0, 6);
 };
 
 // When the player is touching the item, set the item's obtained
@@ -341,15 +341,15 @@ Gem.prototype.success = function() {
 };
 
 // Instantiate initial objects.
-var ladyBug = new LadyBug(getRandomInt(-175, -250), 60 + game.board.tileHeight);
-var greenBug = new GreenBug(getRandomInt(-125, -225), 60 + game.board.tileHeight *2);
-var yellowBug = new YellowBug(getRandomInt(-75, -125),60 + game.board.tileHeight * 3);
-var blueBug = new BlueBug(getRandomInt(-50, -100), 60 + game.board.tileHeight * 4);
+var ladyBug = new LadyBug(getRandomInt(-175, -250), 60 + game.board.TILE_HEIGHT);
+var greenBug = new GreenBug(getRandomInt(-125, -225), 60 + game.board.TILE_HEIGHT *2);
+var yellowBug = new YellowBug(getRandomInt(-75, -125),60 + game.board.TILE_HEIGHT* 3);
+var blueBug = new BlueBug(getRandomInt(-50, -100), 60 + game.board.TILE_HEIGHT * 4);
 var player = new Player();
-var heart = new Heart(game.board.tileWidth * getRandomInt(0, 7),
-    80 + game.board.tileHeight * getRandomInt(0, 6));
-var gem = new Gem(game.board.tileWidth * getRandomInt(0, 7),
-    80 + game.board.tileHeight * getRandomInt(0, 6));
+var heart = new Heart(game.board.TILE_WIDTH * getRandomInt(0, 7),
+    80 + game.board.TILE_HEIGHT * getRandomInt(0, 6));
+var gem = new Gem(game.board.TILE_WIDTH * getRandomInt(0, 7),
+    80 + game.board.TILE_HEIGHT * getRandomInt(0, 6));
 // Make sure gem is not placed where it overlaps the heart
 while (gem.checkCollision(heart)) {
     gem.reset();
@@ -368,27 +368,27 @@ var allEnemies = [ladyBug, greenBug, yellowBug, blueBug];
 function addEnemies(game, level) {
     var cases = {};
     cases[2] = function() {
-        var ladyBug2 = new LadyBug(getRandomInt(-100, -200), 60 + game.board.tileHeight * 3);
+        var ladyBug2 = new LadyBug(getRandomInt(-100, -200), 60 + game.board.TILE_HEIGHT * 3);
         allEnemies.push(ladyBug2);
     };
     cases[4] = function() {
-        var yellowBug2 = new YellowBug(getRandomInt(-100, -250), 60 + game.board.tileHeight * 2);
+        var yellowBug2 = new YellowBug(getRandomInt(-100, -250), 60 + game.board.TILE_HEIGHT * 2);
         allEnemies.push(yellowBug2);
     };
     cases[6] = function() {
-        var greenBug2 = new GreenBug(getRandomInt(-100, -175), 60 + game.board.tileHeight);
+        var greenBug2 = new GreenBug(getRandomInt(-100, -175), 60 + game.board.TILE_HEIGHT);
         allEnemies.push(greenBug2);
     };
     cases[8] = function() {
-        var blueBug2 = new BlueBug(getRandomInt(-100, -225), 60 + game.board.tileHeight * 4);
+        var blueBug2 = new BlueBug(getRandomInt(-100, -225), 60 + game.board.TILE_HEIGHT * 4);
         allEnemies.push(blueBug2);
     };
     cases[10] = function() {
-        var purpleBug = new PurpleBug(getRandomInt(-150, -250), 60 + game.board.tileHeight * 5);
+        var purpleBug = new PurpleBug(getRandomInt(-150, -250), 60 + game.board.TILE_HEIGHT * 5);
         allEnemies.push(purpleBug);
     };
     cases[12] = function() {
-        var purpleBug2 = new PurpleBug(getRandomInt(-100, -200), 60 + game.board.tileHeight * 5);
+        var purpleBug2 = new PurpleBug(getRandomInt(-100, -200), 60 + game.board.TILE_HEIGHT * 5);
         allEnemies.push(purpleBug2);
     };
     cases[14] = function() {
