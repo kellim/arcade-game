@@ -1,7 +1,7 @@
 Bug Crossing
 ===============================
 
-## DEMO:
+## Demo
 You can play the game at [http://kellim.github.io/arcade-game](http://kellim.github.io/arcade-game)
 
 ### Gameplay and Objective
