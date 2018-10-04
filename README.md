@@ -1,6 +1,8 @@
 Bug Crossing
 ===============================
 
+This game is a project created as a part of Udacity's Front-End Web Developer Nanodegree and the goal is to cross the street without getting run over by bugs.
+
 ## Demo
 You can play the game at [http://kellim.github.io/arcade-game](http://kellim.github.io/arcade-game)
 
